@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #todo-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #add-btn {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .todo-list li {
+            padding: 10px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .todo-list li span {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .todo-list li button {
+            margin-left: 10px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Naziya's To-Do List</h2>
+        <input type="text" id="todo-input" placeholder="Add new task">
+        <button id="add-btn">Add</button>
+        <ul id="todo-list" class="todo-list"></ul>
+    </div>
+
+    <script>
+        let todos = [];
+
+        const todoInput = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+
+        addBtn.addEventListener('click', addTodo);
+        todoList.addEventListener('click', handleListClick);
+
+        function addTodo() {
+            const todoText = todoInput.value.trim();
+            if (todoText === "") {
+                alert("Please add a task.");
+                return;
+            }
+            const newTodo = {
+                text: todoText,
+                completed: false
+            };
+            todos.push(newTodo);
+            renderTodos();
+            todoInput.value = '';
+        }
+
+        function handleListClick(event) {
+            if (event.target.tagName === 'BUTTON') {
+                const button = event.target;
+                const index = Array.prototype.indexOf.call(todoList.children, button.parentNode);
+                if (button.textContent === 'Delete') {
+                    deleteTodo(index);
+                } else
+                 if (button.textContent === 'Complete' || button.textContent === 'Undo') {
+                    toggleCompleted(index);
+                }
+            }
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                const textSpan = document.createElement('span');
+                textSpan.textContent = `${index + 1}. ${todo.text}`;
+                if (todo.completed) {
+                    textSpan.classList.add('completed');
+                }
+
+                const completeBtn = document.createElement('button');
+                completeBtn.textContent = todo.completed ? 'Undo' : 'Complete';
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+
+                li.appendChild(textSpan);
+                li.appendChild(completeBtn);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+        }
+
+        function toggleCompleted(index) {
+            todos[index].completed = !todos[index].completed;
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+    </script>
+</body>
+</html>
